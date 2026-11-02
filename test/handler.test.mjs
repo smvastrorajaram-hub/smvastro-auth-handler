@@ -30,6 +30,13 @@ test("account action messages are English-only", () => {
   assert.doesNotMatch(source, /உங்கள் மின்னஞ்சல்|கடவுச்சொல்லை|மீட்டெடுக்கவும்/);
 });
 
+test("handler lets Firebase validate action codes without a local link API-key equality check", () => {
+  assert.match(source, /!actionCode \|\| !linkApiKey/);
+  assert.doesNotMatch(source, /linkApiKey\s*!==\s*FIREBASE_CONFIG\.apiKey/);
+  assert.match(source, /auth\/api-key-not-valid/);
+  assert.match(source, /projectId: "smv-astro"/);
+});
+
 test("handler processes verification, reset, and recovery actions", () => {
   for (const mode of ["verifyEmail", "resetPassword", "recoverEmail"]) {
     assert.ok(source.includes(`"${mode}"`));
