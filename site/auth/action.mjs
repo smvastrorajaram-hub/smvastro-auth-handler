@@ -40,30 +40,6 @@ const COPY = {
     save: "Save new password",
     emailLabel: email => email ? `Account: ${email}` : "Your account has been updated.",
     home: "Go to SMV ASTRO"
-  },
-  ta: {
-    titles: {
-      verifyEmail: "உங்கள் மின்னஞ்சலை உறுதிப்படுத்தவும்",
-      resetPassword: "புதிய கடவுச்சொல்லை அமைக்கவும்",
-      recoverEmail: "முந்தைய மின்னஞ்சலை மீட்டெடுக்கவும்"
-    },
-    working: "உங்கள் பாதுகாப்பான இணைப்பைச் சரிபார்க்கிறது…",
-    verified: "உங்கள் மின்னஞ்சல் முகவரி வெற்றிகரமாக உறுதிப்படுத்தப்பட்டது.",
-    recovered: "உங்கள் முந்தைய மின்னஞ்சல் முகவரி மீட்டெடுக்கப்பட்டது.",
-    resetReady: email => email ? `${email} கணக்கிற்குப் புதிய கடவுச்சொல்லை அமைக்கவும்.` : "கீழே புதிய கடவுச்சொல்லை அமைக்கவும்.",
-    resetDone: "உங்கள் கடவுச்சொல் வெற்றிகரமாக மாற்றப்பட்டது.",
-    mismatch: "இரண்டு கடவுச்சொற்களும் ஒன்றாக இல்லை.",
-    tooShort: "குறைந்தது 6 எழுத்துகள் கொண்ட கடவுச்சொல்லைப் பயன்படுத்தவும்.",
-    invalid: "இந்த இணைப்பு தவறானது, காலாவதியானது அல்லது ஏற்கெனவே பயன்படுத்தப்பட்டது. புதிய மின்னஞ்சலைக் கோரவும்.",
-    missing: "இணைப்பு முழுமையாக இல்லை. மின்னஞ்சலில் உள்ள முழு இணைப்பைத் திறக்கவும்.",
-    failed: "இந்தச் செயலை முடிக்க முடியவில்லை. புதிய மின்னஞ்சலைக் கோரி மீண்டும் முயற்சிக்கவும்.",
-    network: "இணையத் தொடர்பில் சிக்கல். தொடர்பைச் சரிபார்த்து மீண்டும் முயற்சிக்கவும்.",
-    weak: "இந்தக் கடவுச்சொல் திட்டத்தின் பாதுகாப்பு விதிகளைப் பூர்த்தி செய்யவில்லை.",
-    busy: "பலமுறை முயற்சிக்கப்பட்டுள்ளது. சிறிது நேரம் கழித்து முயற்சிக்கவும்.",
-    saving: "சேமிக்கப்படுகிறது…",
-    save: "புதிய கடவுச்சொல்லைச் சேமிக்கவும்",
-    emailLabel: email => email ? `கணக்கு: ${email}` : "உங்கள் கணக்கு புதுப்பிக்கப்பட்டது.",
-    home: "SMV ASTRO முகப்புக்குச் செல்லவும்"
   }
 };
 
@@ -72,8 +48,9 @@ const mode = params.get("mode") || "";
 const actionCode = params.get("oobCode") || "";
 const linkApiKey = params.get("apiKey") || "";
 const rawContinueUrl = params.get("continueUrl") || "";
-const language = (params.get("lang") || "en").toLowerCase().startsWith("ta") ? "ta" : "en";
-const t = COPY[language];
+// Keep all account-action messages in English regardless of device or email locale.
+const language = "en";
+const t = COPY.en;
 
 document.documentElement.lang = language;
 document.getElementById("page-title").textContent = t.titles[mode] || "SMV ASTRO SERVICES";
