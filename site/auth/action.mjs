@@ -40,6 +40,30 @@ const COPY = {
     save: "Save new password",
     emailLabel: email => email ? `Account: ${email}` : "Your account has been updated.",
     home: "Go to SMV ASTRO"
+  },
+  ta: {
+    titles: {
+      verifyEmail: "உங்கள் மின்னஞ்சலை உறுதிப்படுத்தவும்",
+      resetPassword: "புதிய கடவுச்சொல்லை அமைக்கவும்",
+      recoverEmail: "முந்தைய மின்னஞ்சலை மீட்டெடுக்கவும்"
+    },
+    working: "உங்கள் பாதுகாப்பான இணைப்பைச் சரிபார்க்கிறது…",
+    verified: "உங்கள் மின்னஞ்சல் முகவரி வெற்றிகரமாக உறுதிப்படுத்தப்பட்டது.",
+    recovered: "உங்கள் முந்தைய மின்னஞ்சல் முகவரி மீட்டெடுக்கப்பட்டது.",
+    resetReady: email => email ? `${email} கணக்கிற்குப் புதிய கடவுச்சொல்லை அமைக்கவும்.` : "கீழே புதிய கடவுச்சொல்லை அமைக்கவும்.",
+    resetDone: "உங்கள் கடவுச்சொல் வெற்றிகரமாக மாற்றப்பட்டது.",
+    mismatch: "இரண்டு கடவுச்சொற்களும் ஒன்றாக இல்லை.",
+    tooShort: "குறைந்தது 6 எழுத்துகள் கொண்ட கடவுச்சொல்லைப் பயன்படுத்தவும்.",
+    invalid: "இந்த இணைப்பு தவறானது, காலாவதியானது அல்லது ஏற்கெனவே பயன்படுத்தப்பட்டது. புதிய மின்னஞ்சலைக் கோரவும்.",
+    missing: "இணைப்பு முழுமையாக இல்லை. மின்னஞ்சலில் உள்ள முழு இணைப்பைத் திறக்கவும்.",
+    failed: "இந்தச் செயலை முடிக்க முடியவில்லை. புதிய மின்னஞ்சலைக் கோரி மீண்டும் முயற்சிக்கவும்.",
+    network: "இணையத் தொடர்பில் சிக்கல். தொடர்பைச் சரிபார்த்து மீண்டும் முயற்சிக்கவும்.",
+    weak: "இந்தக் கடவுச்சொல் திட்டத்தின் பாதுகாப்பு விதிகளைப் பூர்த்தி செய்யவில்லை.",
+    busy: "பலமுறை முயற்சிக்கப்பட்டுள்ளது. சிறிது நேரம் கழித்து முயற்சிக்கவும்.",
+    saving: "சேமிக்கப்படுகிறது…",
+    save: "புதிய கடவுச்சொல்லைச் சேமிக்கவும்",
+    emailLabel: email => email ? `கணக்கு: ${email}` : "உங்கள் கணக்கு புதுப்பிக்கப்பட்டது.",
+    home: "SMV ASTRO முகப்புக்குச் செல்லவும்"
   }
 };
 
@@ -48,9 +72,8 @@ const mode = params.get("mode") || "";
 const actionCode = params.get("oobCode") || "";
 const linkApiKey = params.get("apiKey") || "";
 const rawContinueUrl = params.get("continueUrl") || "";
-// Keep all account-action messages in English regardless of device or email locale.
-const language = "en";
-const t = COPY.en;
+const language = (params.get("lang") || "en").toLowerCase().startsWith("ta") ? "ta" : "en";
+const t = COPY[language];
 
 document.documentElement.lang = language;
 document.getElementById("page-title").textContent = t.titles[mode] || "SMV ASTRO SERVICES";
@@ -114,22 +137,14 @@ function errorMessage(error) {
       return t.busy;
     case "auth/network-request-failed":
       return t.network;
-    case "auth/unauthorized-domain":
-      return "This verification page domain is not authorized in Firebase Authentication settings.";
-    case "auth/invalid-api-key":
-      return "Firebase rejected the API key used by this verification page. Please contact SMV ASTRO support.";
-    case "auth/app-not-authorized":
-      return "This Firebase web app is not authorized to use the current API key.";
-    case "auth/operation-not-allowed":
-      return "Email verification is not enabled for this Firebase Authentication project.";
     default:
       return t.failed;
   }
 }
 
-function showError(message, detail = "") {
+function showError(message) {
   statusNode.textContent = message;
-  detailNode.textContent = detail;
+  detailNode.textContent = "";
   resetForm.hidden = true;
   continueLink.href = "https://smvastroservices.in/";
   continueLink.textContent = t.home;
@@ -137,9 +152,10 @@ function showError(message, detail = "") {
 }
 
 async function handleVerifyEmail(auth) {
-  // Firebase's custom email-handler flow completes verification by applying the
-  // one-time action code directly. Keep the additional metadata preflight for
-  // recoverEmail only, where the previous address must be displayed.
+  const info = await checkActionCode(auth, actionCode);
+  if (info.operation && info.operation !== "VERIFY_EMAIL") {
+    throw Object.assign(new Error("Unexpected email action"), { code: "auth/invalid-action-code" });
+  }
   await applyActionCode(auth, actionCode);
   showSuccess(t.verified, "");
 }
@@ -224,14 +240,8 @@ async function main() {
         showError(t.missing);
     }
   } catch (error) {
-    const code = String(error?.code || "").trim();
-    console.warn("Firebase email action failed:", code || "unknown");
-    showError(errorMessage(error), code ? "Firebase error code: " + code : "Please share this screen with SMV ASTRO support.");
+    showError(errorMessage(error));
   }
 }
 
-main().catch(error => {
-  const code = String(error?.code || "").trim();
-  console.warn("Firebase email action handler failed:", code || "unknown");
-  showError(errorMessage(error), code ? "Firebase error code: " + code : "Please share this screen with SMV ASTRO support.");
-});
+main().catch(() => showError(t.failed));
