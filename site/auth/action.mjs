@@ -30,6 +30,7 @@ const COPY = {
   mismatch: "The passwords do not match.",
   tooShort: "Use a password with at least 6 characters.",
   invalid: "This link is invalid, expired, or has already been used. Request a new email and try again.",
+  apiKey: "Firebase could not validate this secure link. Please request a fresh email and try again.",
   missing: "The link is incomplete. Open the complete link from your email.",
   failed: "We could not complete this request. Please request a new email and try again.",
   network: "A network error occurred. Check your connection and try again.",
@@ -108,6 +109,9 @@ function errorMessage(error) {
       return t.busy;
     case "auth/network-request-failed":
       return t.network;
+    case "auth/invalid-api-key":
+    case "auth/api-key-not-valid":
+      return t.apiKey;
     default:
       return t.failed;
   }
@@ -188,10 +192,9 @@ async function main() {
     showError(t.missing);
     return;
   }
-  if (linkApiKey !== FIREBASE_CONFIG.apiKey) {
-    showError(t.invalid);
-    return;
-  }
+  // The URL apiKey is Firebase link metadata, not trusted app configuration.
+  // All operations use this fixed Production Firebase project; Firebase itself
+  // validates the one-time action code and reports an authoritative API-key error.
 
   try {
     const app = initializeApp(FIREBASE_CONFIG);
