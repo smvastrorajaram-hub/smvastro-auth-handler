@@ -137,14 +137,22 @@ function errorMessage(error) {
       return t.busy;
     case "auth/network-request-failed":
       return t.network;
+    case "auth/unauthorized-domain":
+      return "This verification page domain is not authorized in Firebase Authentication settings.";
+    case "auth/invalid-api-key":
+      return "Firebase rejected the API key used by this verification page. Please contact SMV ASTRO support.";
+    case "auth/app-not-authorized":
+      return "This Firebase web app is not authorized to use the current API key.";
+    case "auth/operation-not-allowed":
+      return "Email verification is not enabled for this Firebase Authentication project.";
     default:
       return t.failed;
   }
 }
 
-function showError(message) {
+function showError(message, detail = "") {
   statusNode.textContent = message;
-  detailNode.textContent = "";
+  detailNode.textContent = detail;
   resetForm.hidden = true;
   continueLink.href = "https://smvastroservices.in/";
   continueLink.textContent = t.home;
@@ -152,10 +160,9 @@ function showError(message) {
 }
 
 async function handleVerifyEmail(auth) {
-  const info = await checkActionCode(auth, actionCode);
-  if (info.operation && info.operation !== "VERIFY_EMAIL") {
-    throw Object.assign(new Error("Unexpected email action"), { code: "auth/invalid-action-code" });
-  }
+  // Firebase's custom email-handler flow completes verification by applying the
+  // one-time action code directly. Keep the additional metadata preflight for
+  // recoverEmail only, where the previous address must be displayed.
   await applyActionCode(auth, actionCode);
   showSuccess(t.verified, "");
 }
@@ -240,8 +247,14 @@ async function main() {
         showError(t.missing);
     }
   } catch (error) {
-    showError(errorMessage(error));
+    const code = String(error?.code || "").trim();
+    console.warn("Firebase email action failed:", code || "unknown");
+    showError(errorMessage(error), code ? "Firebase error code: " + code : "Please share this screen with SMV ASTRO support.");
   }
 }
 
-main().catch(() => showError(t.failed));
+main().catch(error => {
+  const code = String(error?.code || "").trim();
+  console.warn("Firebase email action handler failed:", code || "unknown");
+  showError(errorMessage(error), code ? "Firebase error code: " + code : "Please share this screen with SMV ASTRO support.");
+});
