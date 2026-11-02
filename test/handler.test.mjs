@@ -33,3 +33,17 @@ test("handler removes one-time parameters and validates continuation origins", (
   assert.doesNotMatch(source, /localStorage|sessionStorage/);
   assert.doesNotMatch(source, /\.innerHTML\s*=/);
 });
+
+
+test("all account-action page messages are English-only", () => {
+  assert.match(html, /<html lang="en">/);
+  assert.match(source, /const language = "en";/);
+  assert.doesNotMatch(source, /தமிழ்|உங்கள்|மின்னஞ்சல்|உறுதிப்படுத்தவும்/);
+});
+
+test("account-action page and status messages have a white background", () => {
+  assert.match(html, /background: #ffffff/);
+  assert.match(html, /main \{[^}]*background: #ffffff/s);
+  assert.match(html, /#status \{[^}]*background: #ffffff/s);
+  assert.match(html, /#detail \{[^}]*background: #ffffff/s);
+});
