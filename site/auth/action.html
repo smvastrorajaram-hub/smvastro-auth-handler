@@ -5,36 +5,35 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex,nofollow">
   <meta name="referrer" content="no-referrer">
-  <meta name="theme-color" content="#f7f1e5">
-  <title>SMV ASTRO SERVICES — Account verification</title>
+  <meta name="theme-color" content="#ffffff">
+  <title>SMV ASTRO SERVICES — Secure account action</title>
   <style>
-    :root { color-scheme: light; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; background: #f7f1e5; color: #29231b; }
+    :root { color-scheme: light; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; background: #ffffff; color: #202124; font-synthesis: none; text-rendering: optimizeLegibility; }
     * { box-sizing: border-box; }
-    body { min-height: 100vh; margin: 0; display: grid; place-items: center; padding: 24px 16px; }
-    main { width: min(100%, 520px); padding: clamp(24px, 6vw, 42px); border: 1px solid #e5d9c4; border-radius: 20px; background: #fffdf8; box-shadow: 0 16px 44px rgba(65, 47, 24, .08); }
-    .brand { margin: 0 0 24px; color: #805b27; font-size: .78rem; font-weight: 800; letter-spacing: .14em; }
-    h1 { margin: 0 0 14px; font-size: clamp(1.55rem, 5vw, 2rem); line-height: 1.2; }
-    p { line-height: 1.6; }
-    #status { margin: 0 0 8px; font-size: 1.05rem; font-weight: 700; }
-    #detail { margin: 0 0 24px; color: #62594d; overflow-wrap: anywhere; }
-    form { display: grid; gap: 12px; margin: 22px 0; }
-    label { display: grid; gap: 6px; font-size: .92rem; font-weight: 650; }
-    input { width: 100%; min-height: 48px; border: 1px solid #cfc2ad; border-radius: 10px; padding: 10px 12px; background: #fff; color: #211d18; font: inherit; }
-    input:focus-visible, button:focus-visible, a:focus-visible { outline: 3px solid #99713c; outline-offset: 3px; }
-    button, .continue { display: inline-flex; align-items: center; justify-content: center; min-height: 48px; border: 0; border-radius: 10px; padding: 12px 18px; background: #6f4b1d; color: #fff; font: inherit; font-weight: 750; text-decoration: none; cursor: pointer; }
-    button:disabled { opacity: .65; cursor: wait; }
-    .continue { margin-top: 8px; }
-    .foot { margin: 26px 0 0; color: #746a5c; font-size: .82rem; }
+    body { min-height: 100vh; margin: 0; display: grid; place-items: center; padding: 24px 16px; background: #ffffff; }
+    main { width: min(100%, 440px); padding: clamp(22px, 5vw, 32px); border: 1px solid #eceff1; border-radius: 16px; background: #ffffff; box-shadow: 0 12px 36px rgba(24, 32, 38, .06); }
+    .brand { margin: 0 0 20px; color: #80643c; font-size: .68rem; font-weight: 750; letter-spacing: .13em; }
+    h1 { margin: 0 0 10px; color: #202124; font-size: 1.18rem; font-weight: 650; line-height: 1.35; letter-spacing: -.015em; }
+    p { line-height: 1.5; }
+    #status { margin: 0 0 7px; color: #292d32; font-size: .88rem; font-weight: 650; }
+    #detail { margin: 0 0 20px; color: #687078; font-size: .82rem; overflow-wrap: anywhere; }
+    form { display: grid; gap: 11px; margin: 18px 0; }
+    label { display: grid; gap: 6px; color: #42484e; font-size: .82rem; font-weight: 600; }
+    input { width: 100%; min-height: 44px; border: 1px solid #d9dee3; border-radius: 9px; padding: 9px 11px; background: #ffffff; color: #202124; font: inherit; font-size: .88rem; }
+    input:focus-visible, button:focus-visible, a:focus-visible { outline: 3px solid rgba(128, 100, 60, .28); outline-offset: 2px; border-color: #80643c; }
+    button, .continue { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; border: 0; border-radius: 9px; padding: 10px 16px; background: #242629; color: #ffffff; font: inherit; font-size: .84rem; font-weight: 650; text-decoration: none; cursor: pointer; }
+    button:disabled { opacity: .62; cursor: wait; }
+    .continue { margin-top: 6px; }
+    .foot { margin: 22px 0 0; color: #858b91; font-size: .7rem; line-height: 1.5; }
     [hidden] { display: none !important; }
   </style>
 </head>
 <body>
   <main>
     <p class="brand">SMV ASTRO SERVICES</p>
-    <h1 id="page-title">Account action</h1>
+    <h1 id="page-title">Secure account action</h1>
     <p id="status" role="status" aria-live="polite">Checking your secure link…</p>
-    <p id="detail">Please keep this page open while the request is checked.</p>
-
+    <p id="detail">Please keep this page open while your request is checked.</p>
     <form id="reset-form" hidden novalidate>
       <label for="new-password">New password
         <input id="new-password" name="new-password" type="password" autocomplete="new-password" minlength="6" required>
@@ -44,9 +43,8 @@
       </label>
       <button id="reset-submit" type="submit">Save new password</button>
     </form>
-
-    <a id="continue-link" class="continue" href="https://smvastroservices.in/" hidden>Go to SMV ASTRO</a>
-    <p class="foot">For your security, this page does not ask for your current password or store your verification code.</p>
+    <a id="continue-link" class="continue" href="https://smvastroservices.in/" hidden>Continue to SMV ASTRO</a>
+    <p class="foot">For your security, this page never asks for your current password or stores your verification code.</p>
   </main>
   <script type="module" src="/auth/action.mjs"></script>
 </body>
